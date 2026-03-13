@@ -51,15 +51,16 @@ const LS = {
 //  STATE
 // ════════════════════════════════════════════════════════════════
 let State = {
-  allQuestions:    [],      // Full fetched dataset
-  dailyCards:      [],      // Questions filtered by active subject
-  currentIndex:    0,       // Current card index
-  isFlipped:       false,   // Is card showing answer?
-  sessionSaved:    0,       // Saved this session
-  sessionSkipped:  0,       // Skipped this session
-  activeSubject:   null,    // null = show subject picker
-  sessionStack:    [],      // Cards seen this session in order [{card, index}]
-  stackPos:        -1,      // Current position in sessionStack (-1 = tip)
+  allQuestions:    [],
+  dailyCards:      [],
+  currentIndex:    0,
+  isFlipped:       false,
+  sessionSaved:    0,
+  sessionSkipped:  0,
+  activeSubject:   null,
+  sessionStack:    [],
+  stackPos:        -1,
+  cramMode:        false,   // true = show scrollable cheat-sheet instead of swipe cards
 
   // ── Sprint Mode ──────────────────────────────────────────────
   sprintMode:         false, // True while 50-card sprint is active
@@ -96,6 +97,7 @@ function _cacheDom() {
     subjectPicker:     document.getElementById('subject-picker'),
     subjectGrid:       document.getElementById('subject-grid'),
     cardArea:          document.getElementById('card-area'),
+    cramView:          document.getElementById('cram-view'),
     btnBackSubjects:   document.getElementById('btn-back-subjects'),
 
     // Card elements
@@ -596,110 +598,6 @@ function _renderStreakUI(streak) {
 }
 
 // ════════════════════════════════════════════════════════════════
-//  GLOSSARY — tap a term on the card to see a quick definition
-// ════════════════════════════════════════════════════════════════
-
-const GLOSSARY = {
-  'photoperiodism':    'The response of a plant\'s flowering to the relative lengths of day and night. Plants are classified as short-day, long-day, or day-neutral based on this response.',
-  'vernalisation':     'The process by which prolonged cold exposure triggers flowering in plants. Wheat and rye require vernalisation before they can produce flowers.',
-  'apomixis':          'Reproduction in plants without fertilisation, producing seeds genetically identical to the mother. Widely studied to fix hybrid vigour permanently.',
-  'allelopathy':       'The release of biochemicals by one plant that inhibit or stimulate nearby plants. Used as a natural weed suppression strategy in farming systems.',
-  'hydroponics':       'A method of growing plants in nutrient-rich water without soil. Roots are directly exposed to mineral solutions, enabling faster and controlled growth.',
-  'aeroponics':        'Growing plants with roots suspended in air, misted with nutrients. Uses less water than hydroponics and delivers more oxygen to the root zone.',
-  'intercropping':     'Growing two or more crops simultaneously on the same field. Improves soil health, reduces pests, and increases overall yield per unit area.',
-  'monoculture':       'Farming a single crop species over a large area in one season. Maximises short-term yield but increases vulnerability to pests and soil depletion.',
-  'polyculture':       'Cultivating multiple crop species together in one system. Mimics natural ecosystems and improves biodiversity, resilience, and farm sustainability.',
-  'phenology':         'The study of cyclic seasonal events in plants and animals, such as flowering dates and leaf fall. Critical for timing farm operations correctly.',
-  'stomata':           'Tiny pores on leaf surfaces that regulate gas exchange (CO₂ and O₂) and water vapour loss. They open and close in response to light and humidity.',
-  'transpiration':     'The process by which water is absorbed by roots, travels through the plant, and evaporates from leaves into the atmosphere via stomata.',
-  'germination':       'The process by which a seed sprouts and begins to grow after absorbing water and receiving the right temperature and light conditions.',
-  'dormancy':          'A state of suspended growth in seeds or buds during unfavourable conditions. Ensures survival until temperature, light, or moisture conditions improve.',
-  'tillage':           'The mechanical preparation of soil for cultivation by ploughing or turning. Zero tillage conserves soil structure, moisture, and reduces erosion.',
-  'mulching':          'Covering soil surface with organic or inorganic material to retain moisture, suppress weeds, and regulate soil temperature around plant roots.',
-  'fertigation':       'The technique of applying fertilisers directly through an irrigation system. Improves nutrient use efficiency and reduces wastage significantly.',
-  'ratooning':         'Allowing a crop to regrow from the root or stubble after harvesting instead of replanting. Common in sugarcane, banana, and rice cultivation.',
-  'lodging':           'The permanent displacement of crop stems from upright position due to wind, rain, or weak stems. Causes significant yield and quality losses.',
-  'etiolation':        'Abnormal elongation of plant stems and yellowing caused by insufficient light exposure. The plant stretches towards the nearest available light source.',
-  'pedology':          'The branch of science dealing with the study of soils in their natural environment, including formation, classification, and mapping of soil types.',
-  'humus':             'The dark, stable organic component of soil formed by decomposition of plant and animal matter. It improves soil structure, water retention, and fertility.',
-  'leaching':          'The downward movement of soluble nutrients through the soil by water. Excessive leaching depletes essential minerals like nitrogen from the root zone.',
-  'percolation':       'The movement of water downward through the soil profile into deeper layers. It affects groundwater recharge, drainage, and nutrient distribution.',
-  'salinity':          'The concentration of dissolved salts in soil or water. High soil salinity reduces water availability to plants and causes ion toxicity in root cells.',
-  'sodicity':          'A soil condition caused by excess exchangeable sodium, leading to poor structure, surface crusting, and severely reduced water infiltration capacity.',
-  'laterite':          'A highly weathered soil rich in iron and aluminium oxides, common in tropical climates. Hardens on exposure to air and is poor in plant nutrients.',
-  'mycorrhizae':       'Symbiotic fungi that colonise plant roots, extending the root surface area dramatically and improving uptake of phosphorus, zinc, and water.',
-  'rhizobium':         'Nitrogen-fixing bacteria living in root nodules of legumes. They convert atmospheric nitrogen gas into ammonia, reducing the need for nitrogen fertilisers.',
-  'erosion':           'The wearing away of topsoil by wind or water action. It is one of the leading causes of land degradation and permanent loss of agricultural productivity.',
-  'compaction':        'The compression of soil particles reducing pore space. It limits root penetration, water infiltration, and air circulation in the soil profile.',
-  'drip irrigation':   'A water-saving method delivering water directly to the plant root zone through small emitters. Reduces evaporation losses and weed growth significantly.',
-  'waterlogging':      'Saturation of soil with water depleting oxygen from the root zone. Causes anaerobic conditions leading to root death in most field crops.',
-  'evapotranspiration':'The combined loss of water by evaporation from soil and transpiration from plants. It is the key parameter for calculating crop water requirements.',
-  'aquifer':           'An underground layer of permeable rock or sediment that stores and transmits groundwater. Over-extraction leads to permanent water table depletion.',
-  'watershed':         'The total land area draining into a common river or water body. Watershed management is critical for flood control, recharge, and irrigation planning.',
-  'IPM':               'Integrated Pest Management — a sustainable approach combining biological, cultural, physical, and chemical tools to minimise pest damage and input costs.',
-  'biocontrol':        'Using living organisms such as predatory insects, parasites, or beneficial pathogens to control pest populations, reducing dependence on chemicals.',
-  'nematode':          'Microscopic roundworms found abundantly in soil. Some species are beneficial predators of pests; others are plant parasites causing serious root damage.',
-  'pathogen':          'Any organism — fungus, bacterium, virus, or parasite — that causes disease in plants or animals. Correct identification is essential for effective control.',
-  'virulence':         'The degree of damage a pathogen causes to its host. Highly virulent strains spread rapidly and produce severe symptoms in susceptible host plants.',
-  'ruminant':          'A mammal that digests plant-based food through a multi-chambered stomach by regurgitating and re-chewing. Cattle, buffalo, sheep, and goats are ruminants.',
-  'monogastric':       'An animal with a single-chambered stomach, such as pigs and poultry. They cannot digest cellulose efficiently and require higher-quality diets.',
-  'zoonosis':          'A disease naturally transmissible from animals to humans. Important examples include rabies, avian influenza, brucellosis, and leptospirosis.',
-  'parturition':       'The process of giving birth in animals. Also called calving in cattle, farrowing in pigs, lambing in sheep, and kidding in goats.',
-  'lactation':         'The production and secretion of milk by mammary glands following parturition. Influenced by breed genetics, nutrition, health status, and milking frequency.',
-  'mastitis':          'Inflammation of the mammary gland in dairy animals, usually caused by bacterial infection. It reduces milk yield and affects milk quality significantly.',
-  'FCR':               'Feed Conversion Ratio — the weight of feed consumed per unit of body weight gained. A lower FCR indicates better feed efficiency and reduced production cost.',
-  'aquaculture':       'The controlled farming of fish, shellfish, algae, or other aquatic organisms in ponds, cages, or tanks. It is the world\'s fastest-growing food sector.',
-  'eutrophication':    'Excessive enrichment of water with nutrients causing dense algal blooms and oxygen depletion. Primarily caused by agricultural and sewage runoff.',
-  'biomass':           'The total mass of all living organisms in a given area. In aquaculture and crop science, it refers to the total weight of organisms being produced.',
-  'MSP':               'Minimum Support Price — the guaranteed price declared by the Indian government at which it procures crops from farmers to protect against price crashes.',
-  'procurement':       'The process by which government agencies purchase food grains from farmers at MSP. Procured grain enters the central pool as food security buffer stock.',
-  'subsidies':         'Financial support given by the government to reduce production costs for farmers on inputs like fertilisers, seeds, electricity, and irrigation water.',
-  'PDS':               'Public Distribution System — India\'s food security network that supplies subsidised grains, pulses, and other commodities to eligible poor households.',
-  'NABARD':            'National Bank for Agriculture and Rural Development — India\'s apex bank for agricultural credit, rural development, and cooperative sector financing.',
-  'cooperatives':      'Farmer-owned member organisations that pool resources for jointly purchasing inputs, processing produce, and accessing credit on better terms.',
-  'FPO':               'Farmer Producer Organisation — a company registered under the Companies Act, owned by farmers, aimed at improving collective bargaining and market access.',
-  'biodiversity':      'The variety of life on Earth encompassing genes, species, and ecosystems. Agricultural biodiversity is essential for food security and climate resilience.',
-  'agroforestry':      'A land-use system integrating trees with crops or livestock on the same land simultaneously. Improves soil health, biodiversity, income, and microclimate.',
-  'deforestation':     'The permanent clearing of forest cover, mostly for agriculture or development. It accelerates soil erosion, destroys biodiversity, and worsens climate change.',
-  'desertification':   'The degradation of fertile dryland into desert, caused by drought, overgrazing, or poor land management. A major global threat to agricultural land.',
-  'methane':           'A potent greenhouse gas released by ruminant digestion, rice paddies, and manure. Its warming impact is about 25–80 times greater than CO₂ over decades.',
-  'GMO':               'Genetically Modified Organism — a plant or animal whose DNA has been altered using genetic engineering tools to introduce new or enhanced traits.',
-  'genome editing':    'Precise modification of DNA at targeted locations using tools like CRISPR-Cas9. Enables crop improvement without introducing genes from unrelated organisms.',
-  'hybrid seed':       'Seed produced by controlled cross-pollination of two selected parent varieties. Hybrid crops show higher yield and vigour but seeds cannot be reliably saved.',
-  'biofortification':  'The process of increasing the nutritional content of crops through plant breeding or biotechnology. Golden Rice enriched with vitamin A is a key example.',
-  'precision farming': 'Using GPS, sensors, drones, and analytics to apply inputs only where and when needed, maximising resource efficiency and minimising environmental impact.',
-  'remote sensing':    'Acquiring information about crops, soil, or water from a distance using satellite or aerial imagery. Used to detect crop stress, map soils, and monitor yield.',
-  'GIS':               'Geographic Information System — software capturing and analysing spatial data. Used in agriculture for soil mapping, field planning, and resource allocation.',
-  'GDP':               'Gross Domestic Product — the total monetary value of all goods and services produced within a country\'s borders in a specific time period.',
-  'inflation':         'A sustained rise in the general price level of goods and services over time, leading to a fall in the purchasing power of money.',
-  'repo rate':         'The rate at which the Reserve Bank of India lends short-term funds to commercial banks. Raising it curbs inflation; reducing it stimulates economic activity.',
-  'SEBI':              'Securities and Exchange Board of India — the statutory regulator of India\'s capital and securities markets, protecting investor interests and ensuring fair trading.',
-  'GST':               'Goods and Services Tax — India\'s comprehensive indirect tax replacing multiple central and state levies, applied uniformly on the supply of goods and services.',
-  'disinvestment':     'The process by which the government reduces its equity stake in public sector enterprises by selling shares to private investors to raise funds.',
-  'Kisan Credit Card': 'A revolving credit facility for Indian farmers providing flexible short-term loans for seeds, fertilisers, and post-harvest expenses at subsidised interest rates.',
-};
-
-/**
- * Wraps GLOSSARY words found in text with a styled <span>.
- * IMPORTANT: Sets on the inner .card-text-inner span, not the flex container.
- * Returns HTML — input is _escHtml()'d first so it is always safe.
- */
-function _linkGlossary(text) {
-  if (!text) return '';
-  let html = _escHtml(text);
-  // Longest keys first so "drip irrigation" matches before "irrigation"
-  const keys = Object.keys(GLOSSARY).sort((a, b) => b.length - a.length);
-  keys.forEach(term => {
-    const esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const re  = new RegExp(`(?<![\\w-])(${esc})(?![\\w-])`, 'gi');
-    html = html.replace(re, m =>
-      `<span class="glossary-term" data-term="${_escHtml(term.toLowerCase())}">${m}</span>`
-    );
-  });
-  return html;
-}
-
-// ════════════════════════════════════════════════════════════════
 //  CARD RENDERING
 // ════════════════════════════════════════════════════════════════
 
@@ -730,16 +628,12 @@ function _renderCard(question, skipStack) {
     card.style.transition = '';
   }
 
-  // Fill content — use inner spans so flex layout of parent is never disturbed
+  // Fill content
   const cardNum = State.currentIndex + 1;
-  if (DOM.cardNumber) DOM.cardNumber.textContent = `Q${cardNum}`;
-
-  const qInner  = document.getElementById('card-question-inner');
-  const aInner  = document.getElementById('card-answer-inner');
-  const rInner  = document.getElementById('card-question-repeat-inner');
-  if (qInner) qInner.innerHTML = _linkGlossary(question.question);
-  if (aInner) aInner.innerHTML = _linkGlossary(question.answer);
-  if (rInner) rInner.innerHTML = _linkGlossary(question.question);
+  if (DOM.cardNumber)         DOM.cardNumber.textContent         = `Q${cardNum}`;
+  if (DOM.cardQuestion)       DOM.cardQuestion.textContent       = question.question;
+  if (DOM.cardAnswer)         DOM.cardAnswer.textContent         = question.answer;
+  if (DOM.cardQuestionRepeat) DOM.cardQuestionRepeat.textContent = question.question;
 
   // Show swipe guide on very first card ever
   if (!ls_get(LS.GUIDE_SHOWN)) {
@@ -1057,20 +951,27 @@ function selectSubject(subject) {
   DOM.subjectPicker?.classList.add('hidden');
   DOM.cardArea?.classList.remove('hidden');
 
-  _updateDailyProgress();
-  _renderCard(State.dailyCards[0]);
+  if (State.cramMode) {
+    _renderCramView();
+  } else {
+    _updateDailyProgress();
+    _renderCard(State.dailyCards[0]);
+  }
 }
 
 function showSubjectPicker() {
-  // Stop any active swipe session
   SwipeEngine.destroy();
   State.activeSubject = null;
   State.currentIndex  = 0;
 
+  // Tear down cram view if active
+  if (DOM.cramView) {
+    DOM.cramView.innerHTML = '';
+    DOM.cramView.classList.add('hidden');
+  }
   DOM.cardArea?.classList.add('hidden');
   DOM.subjectPicker?.classList.remove('hidden');
 
-  // Re-render so counts are fresh
   renderSubjectPicker();
   TG.Haptic.select();
 }
@@ -2080,46 +1981,90 @@ function _shareApp() {
 }
 
 // ════════════════════════════════════════════════════════════════
-//  GLOSSARY BOTTOM SHEET
+//  CRAM MODE — scrollable cheat-sheet view
 // ════════════════════════════════════════════════════════════════
 
-function _initGlossarySheet() {
-  const overlay  = document.getElementById('glossary-overlay');
-  const termEl   = document.getElementById('glossary-term-title');
-  const defEl    = document.getElementById('glossary-definition');
-  const closeBtn = document.getElementById('glossary-close');
-  if (!overlay) return;
+function _renderCramView() {
+  const container = DOM.cramView;
+  if (!container) return;
 
-  // Open on any glossary-term tap
-  document.addEventListener('click', (e) => {
-    const span = e.target.closest('.glossary-term');
-    if (!span) return;
-    e.stopPropagation();
-    const key = span.dataset.term;
-    const def = GLOSSARY[key] ||
-      Object.entries(GLOSSARY).find(([k]) => k.toLowerCase() === key)?.[1];
-    if (!def) return;
-    termEl.textContent = span.textContent;
-    defEl.textContent  = def;
-    overlay.classList.remove('hidden');
-    requestAnimationFrame(() => overlay.classList.add('open'));
-    TG.Haptic.light();
+  // Hide swipe arena, show cram container
+  DOM.cardArena?.classList.add('hidden');
+  DOM.actionRow?.classList.add('hidden');
+  DOM.sprintHud?.classList.add('hidden');
+  DOM.swipeGuide?.classList.add('hidden');
+  DOM.dailyProgressFill?.parentElement?.parentElement?.classList.add('hidden');
+  if (DOM.dailyCount) DOM.dailyCount.textContent = `${State.dailyCards.length} cards`;
+
+  container.innerHTML = '';
+  container.classList.remove('hidden');
+
+  // Section header
+  const header = document.createElement('div');
+  header.className = 'cram-header';
+  header.innerHTML = `
+    <span class="cram-header-count">${State.dailyCards.length} questions</span>
+    <span class="cram-header-hint">Tap any answer to highlight</span>
+  `;
+  container.appendChild(header);
+
+  // Render every Q&A card
+  State.dailyCards.forEach((q, i) => {
+    const item = document.createElement('div');
+    item.className = 'cram-item';
+    item.style.setProperty('--ci', i);
+
+    const qNum  = `<span class="cram-num">Q${i + 1}</span>`;
+    const qText = `<div class="cram-question">${qNum}${_linkGlossary(q.question)}</div>`;
+    const aText = `<div class="cram-answer" id="cram-ans-${i}">${_escHtml(q.answer)}</div>`;
+    const cat   = q.category
+      ? `<span class="cram-category">${_escHtml(q.category)}</span>`
+      : '';
+
+    item.innerHTML = `
+      ${cat}
+      ${qText}
+      ${aText}
+    `;
+
+    // Tap anywhere on item to toggle answer highlight
+    item.addEventListener('click', () => {
+      item.classList.toggle('cram-revealed');
+      TG.Haptic.light();
+    });
+
+    container.appendChild(item);
   });
 
-  function _close() {
-    overlay.classList.remove('open');
-    setTimeout(() => overlay.classList.add('hidden'), 300);
+  // Save button at bottom
+  const footer = document.createElement('div');
+  footer.className = 'cram-footer';
+  footer.innerHTML = `<p class="cram-footer-tip">Tap any card to reveal / hide the answer</p>`;
+  container.appendChild(footer);
+}
+
+// ── Mode toggle wiring ────────────────────────────────────────
+function _initModeToggle() {
+  const swipeBtn = document.getElementById('mode-btn-swipe');
+  const cramBtn  = document.getElementById('mode-btn-cram');
+  if (!swipeBtn || !cramBtn) return;
+
+  function _setMode(mode) {
+    State.cramMode = (mode === 'cram');
+    swipeBtn.classList.toggle('active', !State.cramMode);
+    cramBtn.classList.toggle('active',  State.cramMode);
     TG.Haptic.select();
+    // Update subtitle hint under "Choose a Subject"
+    const sub = document.querySelector('.subject-sub');
+    if (sub) {
+      sub.textContent = State.cramMode
+        ? 'Select a subject to open the full cheat sheet'
+        : 'Select any subject to start swiping cards';
+    }
   }
 
-  closeBtn?.addEventListener('click', _close);
-  overlay.addEventListener('click', (e) => { if (e.target === overlay) _close(); });
-
-  // Swipe down the sheet to close
-  const sheet = document.getElementById('glossary-sheet');
-  let _sy = 0;
-  sheet?.addEventListener('touchstart', e => { _sy = e.touches[0].clientY; }, { passive: true });
-  sheet?.addEventListener('touchend',   e => { if (e.changedTouches[0].clientY - _sy > 55) _close(); }, { passive: true });
+  swipeBtn.addEventListener('click', () => _setMode('swipe'));
+  cramBtn.addEventListener('click',  () => _setMode('cram'));
 }
 
 async function boot() {
@@ -2150,7 +2095,7 @@ async function boot() {
   // 6. Init tabs and buttons
   _initTabs();
   _initButtons();
-  _initGlossarySheet();
+  _initModeToggle();
 
   // 7. Dismiss splash
   await _delay(300);
