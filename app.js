@@ -600,111 +600,100 @@ function _renderStreakUI(streak) {
 // ════════════════════════════════════════════════════════════════
 
 const GLOSSARY = {
-  // ── Agronomy & Crops ─────────────────────────────────────────
-  'photoperiodism':    'The response of a plant\'s flowering or growth to the relative lengths of day and night. Plants are classified as short-day, long-day, or day-neutral.',
-  'vernalisation':     'The process by which prolonged cold exposure triggers flowering in plants. Wheat and rye require vernalisation before they can flower.',
-  'apomixis':          'Reproduction in plants without fertilisation, producing seeds genetically identical to the mother plant. Widely studied to fix hybrid vigour.',
-  'allelopathy':       'The release of biochemicals by one plant that inhibit or stimulate the growth of nearby plants. Used in natural weed suppression strategies.',
-  'hydroponics':       'A method of growing plants in nutrient-rich water without soil. Roots are directly exposed to mineral solutions, enabling faster growth.',
-  'aeroponics':        'Growing plants with roots suspended in air and misted with nutrients. Uses less water than hydroponics and allows more oxygen to roots.',
+  'photoperiodism':    'The response of a plant\'s flowering to the relative lengths of day and night. Plants are classified as short-day, long-day, or day-neutral based on this response.',
+  'vernalisation':     'The process by which prolonged cold exposure triggers flowering in plants. Wheat and rye require vernalisation before they can produce flowers.',
+  'apomixis':          'Reproduction in plants without fertilisation, producing seeds genetically identical to the mother. Widely studied to fix hybrid vigour permanently.',
+  'allelopathy':       'The release of biochemicals by one plant that inhibit or stimulate nearby plants. Used as a natural weed suppression strategy in farming systems.',
+  'hydroponics':       'A method of growing plants in nutrient-rich water without soil. Roots are directly exposed to mineral solutions, enabling faster and controlled growth.',
+  'aeroponics':        'Growing plants with roots suspended in air, misted with nutrients. Uses less water than hydroponics and delivers more oxygen to the root zone.',
   'intercropping':     'Growing two or more crops simultaneously on the same field. Improves soil health, reduces pests, and increases overall yield per unit area.',
-  'monoculture':       'Farming a single crop species over a large area. Maximises short-term yield but increases vulnerability to pests, disease, and soil depletion.',
-  'polyculture':       'Cultivating multiple crop species together in one system. Mimics natural ecosystems and improves biodiversity, resilience, and sustainability.',
-  'phenology':         'The study of cyclic and seasonal natural phenomena in plants and animals, such as flowering dates, leaf fall, and migration timings.',
-  'stomata':           'Tiny pores found mainly on leaf surfaces that regulate gas exchange (CO₂ and O₂) and water vapour loss through transpiration.',
-  'transpiration':     'The process by which water is absorbed by roots, travels through the plant, and evaporates from leaves into the atmosphere.',
-  'germination':       'The process by which a seed sprouts and begins to grow into a seedling after absorbing water and receiving the right temperature conditions.',
-  'dormancy':          'A state of suspended growth in seeds or buds during unfavourable conditions. It ensures survival until temperature, light, or moisture improves.',
-  'tillage':           'The mechanical preparation of soil for cultivation by ploughing, turning, or breaking. Zero tillage conserves soil structure and moisture.',
-  'mulching':          'Covering soil surface with organic or inorganic material to retain moisture, suppress weeds, and regulate soil temperature.',
-  'fertigation':       'The technique of applying fertilisers directly through an irrigation system. Improves nutrient efficiency and reduces wastage.',
-  'ratooning':         'Allowing a crop to regrow from the root or stubble after harvesting rather than replanting. Common in sugarcane, banana, and rice.',
-  'lodging':           'The permanent displacement of plant stems from their upright position due to wind, rain, or weak stems. Causes significant yield losses.',
-  'etiolation':        'Abnormal elongation of plant stems and pale colour caused by insufficient light. The plant stretches towards the nearest light source.',
-  // ── Soil Science ─────────────────────────────────────────────
-  'pedology':          'The branch of science dealing with the study of soils in their natural environment, including their formation, classification, and mapping.',
-  'humus':             'The dark organic component of soil formed by decomposition of plant and animal matter. It improves soil structure, water retention, and fertility.',
-  'leaching':          'The downward movement of soluble nutrients through the soil by water. Excessive leaching depletes essential minerals from the root zone.',
-  'percolation':       'The movement of water through the soil profile, especially into deeper layers. Affects groundwater recharge and nutrient distribution.',
-  'salinity':          'The concentration of dissolved salts in soil or water. High soil salinity reduces water availability to plants and damages root cells.',
-  'sodicity':          'A soil condition caused by excess sodium ions, leading to poor structure, crusting, and reduced water infiltration. Differs from salinity.',
-  'laterite':          'A highly weathered soil rich in iron and aluminium oxides, formed in tropical climates. Hardens when exposed to air; low in plant nutrients.',
-  'mycorrhizae':       'Symbiotic fungi that colonise plant roots, greatly extending the root surface area and improving uptake of phosphorus and water.',
-  'rhizobium':         'Nitrogen-fixing bacteria that live in root nodules of legumes. They convert atmospheric nitrogen into ammonia, reducing the need for fertilisers.',
-  'erosion':           'The wearing away of topsoil by wind or water. It is one of the leading causes of land degradation and loss of agricultural productivity.',
-  'compaction':        'The compression of soil particles, reducing pore space and limiting root growth, water infiltration, and air circulation.',
-  // ── Irrigation & Water ───────────────────────────────────────
-  'drip irrigation':   'A water-saving method that delivers water directly to the plant root zone through emitters. Reduces evaporation and weed growth significantly.',
-  'waterlogging':      'Saturation of soil with water to the point that oxygen is depleted from the root zone, causing stress or death to most crops.',
-  'evapotranspiration':'The combined process of evaporation from the soil surface and transpiration from plant leaves. Key for estimating crop water requirements.',
-  'aquifer':           'An underground layer of porous rock or sediment that holds and transmits groundwater. Over-extraction of aquifers leads to water table depletion.',
-  'watershed':         'The total land area that drains into a common river, stream, or body of water. Watershed management is critical for flood control and irrigation.',
-  // ── Plant Protection ─────────────────────────────────────────
-  'IPM':               'Integrated Pest Management — a sustainable approach combining biological, cultural, physical, and chemical tools to minimise pest damage and costs.',
-  'biocontrol':        'Using living organisms such as predatory insects, parasites, or pathogens to control pest populations, reducing reliance on chemical pesticides.',
-  'nematode':          'Microscopic roundworms found in soil. Some are beneficial predators of pests, while others are plant parasites causing serious root damage.',
-  'pathogen':          'Any organism — fungus, bacteria, virus, or parasite — that causes disease in plants or animals. Identifying pathogens is key to crop protection.',
-  'virulence':         'The degree of damage a pathogen can cause to a host. Highly virulent strains spread rapidly and cause severe symptoms in infected plants.',
-  // ── Animal Science ───────────────────────────────────────────
-  'ruminant':          'A mammal that digests plant-based food through a specialised stomach with multiple chambers. Cattle, sheep, and goats are common ruminants.',
-  'monogastric':       'An animal with a single-chambered stomach, such as pigs and poultry. They cannot digest cellulose efficiently unlike ruminants.',
-  'zoonosis':          'A disease that can be transmitted between animals and humans. Examples include rabies, avian influenza, and brucellosis.',
-  'parturition':       'The process of giving birth in animals. Also called calving (cattle), farrowing (pigs), lambing (sheep), or kidding (goats).',
-  'lactation':         'The production and secretion of milk by mammary glands after parturition. Influenced by breed, nutrition, health, and milking frequency.',
-  'mastitis':          'Inflammation of the mammary gland in dairy animals, usually caused by bacterial infection. It reduces milk yield and affects milk quality.',
-  'FCR':               'Feed Conversion Ratio — the amount of feed required to produce one unit of body weight gain. Lower FCR means better feed efficiency.',
-  // ── Fisheries & Aquaculture ──────────────────────────────────
-  'aquaculture':       'The controlled farming of fish, shellfish, algae, or other aquatic organisms. It is the fastest-growing food production sector globally.',
-  'eutrophication':    'The excessive enrichment of water with nutrients, causing dense algae growth and oxygen depletion that kills aquatic life. Often from farm runoff.',
-  'biomass':           'The total mass of living organisms in a given area or volume. In aquaculture, it refers to the total weight of fish in a pond or tank.',
-  // ── Agricultural Economics & Policy ─────────────────────────
-  'MSP':               'Minimum Support Price — a guaranteed price set by the Indian government at which it purchases crops from farmers to protect against market falls.',
-  'procurement':       'The process by which government agencies buy food grains from farmers at the MSP. Procured grain goes into the public food buffer stock.',
-  'subsidies':         'Financial assistance given by the government to farmers to reduce production costs for inputs like fertilisers, seeds, power, and irrigation.',
-  'PDS':               'Public Distribution System — the Indian government\'s food security programme that supplies subsidised grains to below-poverty-line households.',
-  'NABARD':            'National Bank for Agriculture and Rural Development — India\'s apex development bank for agriculture, rural industries, and small enterprises.',
-  'cooperatives':      'Farmer-owned organisations where members pool resources for buying inputs, processing produce, or accessing credit on favourable terms.',
-  'FPO':               'Farmer Producer Organisation — a collective body of farmers registered under the Companies Act to improve bargaining power and market access.',
-  'Kisan Credit Card': 'A short-term credit scheme for Indian farmers providing flexible loans for crop production, maintenance, and post-harvest expenses.',
-  // ── Environment & Ecology ────────────────────────────────────
-  'biodiversity':      'The variety of life on Earth — including genes, species, and ecosystems. Agricultural biodiversity is critical for food security and resilience.',
-  'agroforestry':      'A land-use system that integrates trees with crops or livestock on the same land. It improves soil health, biodiversity, and farm income.',
-  'deforestation':     'The permanent removal of forest cover, often for agriculture or development. It causes soil erosion, loss of biodiversity, and climate change.',
-  'desertification':   'The process by which fertile land becomes desert, typically due to drought, deforestation, or inappropriate agriculture. A major land-use crisis.',
-  'eutrophication':    'Excessive nutrient enrichment of water bodies causing algae blooms and oxygen depletion, harming aquatic life. Mainly caused by agricultural runoff.',
-  'methane':           'A potent greenhouse gas produced by ruminant livestock digestion, rice paddies, and manure management. Much more warming than CO₂ over 20 years.',
-  // ── Science & Technology ─────────────────────────────────────
-  'GMO':               'Genetically Modified Organism — a plant or animal whose DNA has been altered using genetic engineering to introduce new or improved traits.',
-  'genome editing':    'Precise modification of DNA at specific locations using tools like CRISPR-Cas9. Enables targeted crop improvement without introducing foreign genes.',
-  'hybrid seed':       'Seed produced by cross-pollinating two genetically different parent varieties. Hybrids show vigour and high yield but cannot be reliably re-sown.',
-  'biofortification':  'The process of increasing the nutritional value of crops through breeding or genetic modification. E.g., Golden Rice is biofortified with vitamin A.',
-  'precision farming': 'Using GPS, sensors, drones, and data analytics to manage fields variably and efficiently, applying inputs only where and when they are needed.',
-  'remote sensing':    'Acquiring information about land, crops, or water from a distance using satellites or aircraft. Used to monitor crop health and detect stress.',
-  'GIS':               'Geographic Information System — software that captures, stores, and analyses spatial data. Used in agriculture for soil mapping and field management.',
-  // ── General / Current Affairs ────────────────────────────────
-  'GDP':               'Gross Domestic Product — the total monetary value of all goods and services produced in a country in a specific time period.',
-  'inflation':         'A general rise in the price level of goods and services over time, reducing the purchasing power of money.',
-  'repo rate':         'The rate at which the Reserve Bank of India lends short-term funds to commercial banks. Raising it controls inflation; lowering it spurs growth.',
-  'SEBI':              'Securities and Exchange Board of India — the regulatory body overseeing India\'s stock and securities markets to protect investors.',
-  'GST':               'Goods and Services Tax — India\'s unified indirect tax replacing multiple levies, applied on the supply of goods and services across the country.',
-  'disinvestment':     'The process by which the government sells its stake in public sector enterprises to private investors to raise funds or improve efficiency.',
+  'monoculture':       'Farming a single crop species over a large area in one season. Maximises short-term yield but increases vulnerability to pests and soil depletion.',
+  'polyculture':       'Cultivating multiple crop species together in one system. Mimics natural ecosystems and improves biodiversity, resilience, and farm sustainability.',
+  'phenology':         'The study of cyclic seasonal events in plants and animals, such as flowering dates and leaf fall. Critical for timing farm operations correctly.',
+  'stomata':           'Tiny pores on leaf surfaces that regulate gas exchange (CO₂ and O₂) and water vapour loss. They open and close in response to light and humidity.',
+  'transpiration':     'The process by which water is absorbed by roots, travels through the plant, and evaporates from leaves into the atmosphere via stomata.',
+  'germination':       'The process by which a seed sprouts and begins to grow after absorbing water and receiving the right temperature and light conditions.',
+  'dormancy':          'A state of suspended growth in seeds or buds during unfavourable conditions. Ensures survival until temperature, light, or moisture conditions improve.',
+  'tillage':           'The mechanical preparation of soil for cultivation by ploughing or turning. Zero tillage conserves soil structure, moisture, and reduces erosion.',
+  'mulching':          'Covering soil surface with organic or inorganic material to retain moisture, suppress weeds, and regulate soil temperature around plant roots.',
+  'fertigation':       'The technique of applying fertilisers directly through an irrigation system. Improves nutrient use efficiency and reduces wastage significantly.',
+  'ratooning':         'Allowing a crop to regrow from the root or stubble after harvesting instead of replanting. Common in sugarcane, banana, and rice cultivation.',
+  'lodging':           'The permanent displacement of crop stems from upright position due to wind, rain, or weak stems. Causes significant yield and quality losses.',
+  'etiolation':        'Abnormal elongation of plant stems and yellowing caused by insufficient light exposure. The plant stretches towards the nearest available light source.',
+  'pedology':          'The branch of science dealing with the study of soils in their natural environment, including formation, classification, and mapping of soil types.',
+  'humus':             'The dark, stable organic component of soil formed by decomposition of plant and animal matter. It improves soil structure, water retention, and fertility.',
+  'leaching':          'The downward movement of soluble nutrients through the soil by water. Excessive leaching depletes essential minerals like nitrogen from the root zone.',
+  'percolation':       'The movement of water downward through the soil profile into deeper layers. It affects groundwater recharge, drainage, and nutrient distribution.',
+  'salinity':          'The concentration of dissolved salts in soil or water. High soil salinity reduces water availability to plants and causes ion toxicity in root cells.',
+  'sodicity':          'A soil condition caused by excess exchangeable sodium, leading to poor structure, surface crusting, and severely reduced water infiltration capacity.',
+  'laterite':          'A highly weathered soil rich in iron and aluminium oxides, common in tropical climates. Hardens on exposure to air and is poor in plant nutrients.',
+  'mycorrhizae':       'Symbiotic fungi that colonise plant roots, extending the root surface area dramatically and improving uptake of phosphorus, zinc, and water.',
+  'rhizobium':         'Nitrogen-fixing bacteria living in root nodules of legumes. They convert atmospheric nitrogen gas into ammonia, reducing the need for nitrogen fertilisers.',
+  'erosion':           'The wearing away of topsoil by wind or water action. It is one of the leading causes of land degradation and permanent loss of agricultural productivity.',
+  'compaction':        'The compression of soil particles reducing pore space. It limits root penetration, water infiltration, and air circulation in the soil profile.',
+  'drip irrigation':   'A water-saving method delivering water directly to the plant root zone through small emitters. Reduces evaporation losses and weed growth significantly.',
+  'waterlogging':      'Saturation of soil with water depleting oxygen from the root zone. Causes anaerobic conditions leading to root death in most field crops.',
+  'evapotranspiration':'The combined loss of water by evaporation from soil and transpiration from plants. It is the key parameter for calculating crop water requirements.',
+  'aquifer':           'An underground layer of permeable rock or sediment that stores and transmits groundwater. Over-extraction leads to permanent water table depletion.',
+  'watershed':         'The total land area draining into a common river or water body. Watershed management is critical for flood control, recharge, and irrigation planning.',
+  'IPM':               'Integrated Pest Management — a sustainable approach combining biological, cultural, physical, and chemical tools to minimise pest damage and input costs.',
+  'biocontrol':        'Using living organisms such as predatory insects, parasites, or beneficial pathogens to control pest populations, reducing dependence on chemicals.',
+  'nematode':          'Microscopic roundworms found abundantly in soil. Some species are beneficial predators of pests; others are plant parasites causing serious root damage.',
+  'pathogen':          'Any organism — fungus, bacterium, virus, or parasite — that causes disease in plants or animals. Correct identification is essential for effective control.',
+  'virulence':         'The degree of damage a pathogen causes to its host. Highly virulent strains spread rapidly and produce severe symptoms in susceptible host plants.',
+  'ruminant':          'A mammal that digests plant-based food through a multi-chambered stomach by regurgitating and re-chewing. Cattle, buffalo, sheep, and goats are ruminants.',
+  'monogastric':       'An animal with a single-chambered stomach, such as pigs and poultry. They cannot digest cellulose efficiently and require higher-quality diets.',
+  'zoonosis':          'A disease naturally transmissible from animals to humans. Important examples include rabies, avian influenza, brucellosis, and leptospirosis.',
+  'parturition':       'The process of giving birth in animals. Also called calving in cattle, farrowing in pigs, lambing in sheep, and kidding in goats.',
+  'lactation':         'The production and secretion of milk by mammary glands following parturition. Influenced by breed genetics, nutrition, health status, and milking frequency.',
+  'mastitis':          'Inflammation of the mammary gland in dairy animals, usually caused by bacterial infection. It reduces milk yield and affects milk quality significantly.',
+  'FCR':               'Feed Conversion Ratio — the weight of feed consumed per unit of body weight gained. A lower FCR indicates better feed efficiency and reduced production cost.',
+  'aquaculture':       'The controlled farming of fish, shellfish, algae, or other aquatic organisms in ponds, cages, or tanks. It is the world\'s fastest-growing food sector.',
+  'eutrophication':    'Excessive enrichment of water with nutrients causing dense algal blooms and oxygen depletion. Primarily caused by agricultural and sewage runoff.',
+  'biomass':           'The total mass of all living organisms in a given area. In aquaculture and crop science, it refers to the total weight of organisms being produced.',
+  'MSP':               'Minimum Support Price — the guaranteed price declared by the Indian government at which it procures crops from farmers to protect against price crashes.',
+  'procurement':       'The process by which government agencies purchase food grains from farmers at MSP. Procured grain enters the central pool as food security buffer stock.',
+  'subsidies':         'Financial support given by the government to reduce production costs for farmers on inputs like fertilisers, seeds, electricity, and irrigation water.',
+  'PDS':               'Public Distribution System — India\'s food security network that supplies subsidised grains, pulses, and other commodities to eligible poor households.',
+  'NABARD':            'National Bank for Agriculture and Rural Development — India\'s apex bank for agricultural credit, rural development, and cooperative sector financing.',
+  'cooperatives':      'Farmer-owned member organisations that pool resources for jointly purchasing inputs, processing produce, and accessing credit on better terms.',
+  'FPO':               'Farmer Producer Organisation — a company registered under the Companies Act, owned by farmers, aimed at improving collective bargaining and market access.',
+  'biodiversity':      'The variety of life on Earth encompassing genes, species, and ecosystems. Agricultural biodiversity is essential for food security and climate resilience.',
+  'agroforestry':      'A land-use system integrating trees with crops or livestock on the same land simultaneously. Improves soil health, biodiversity, income, and microclimate.',
+  'deforestation':     'The permanent clearing of forest cover, mostly for agriculture or development. It accelerates soil erosion, destroys biodiversity, and worsens climate change.',
+  'desertification':   'The degradation of fertile dryland into desert, caused by drought, overgrazing, or poor land management. A major global threat to agricultural land.',
+  'methane':           'A potent greenhouse gas released by ruminant digestion, rice paddies, and manure. Its warming impact is about 25–80 times greater than CO₂ over decades.',
+  'GMO':               'Genetically Modified Organism — a plant or animal whose DNA has been altered using genetic engineering tools to introduce new or enhanced traits.',
+  'genome editing':    'Precise modification of DNA at targeted locations using tools like CRISPR-Cas9. Enables crop improvement without introducing genes from unrelated organisms.',
+  'hybrid seed':       'Seed produced by controlled cross-pollination of two selected parent varieties. Hybrid crops show higher yield and vigour but seeds cannot be reliably saved.',
+  'biofortification':  'The process of increasing the nutritional content of crops through plant breeding or biotechnology. Golden Rice enriched with vitamin A is a key example.',
+  'precision farming': 'Using GPS, sensors, drones, and analytics to apply inputs only where and when needed, maximising resource efficiency and minimising environmental impact.',
+  'remote sensing':    'Acquiring information about crops, soil, or water from a distance using satellite or aerial imagery. Used to detect crop stress, map soils, and monitor yield.',
+  'GIS':               'Geographic Information System — software capturing and analysing spatial data. Used in agriculture for soil mapping, field planning, and resource allocation.',
+  'GDP':               'Gross Domestic Product — the total monetary value of all goods and services produced within a country\'s borders in a specific time period.',
+  'inflation':         'A sustained rise in the general price level of goods and services over time, leading to a fall in the purchasing power of money.',
+  'repo rate':         'The rate at which the Reserve Bank of India lends short-term funds to commercial banks. Raising it curbs inflation; reducing it stimulates economic activity.',
+  'SEBI':              'Securities and Exchange Board of India — the statutory regulator of India\'s capital and securities markets, protecting investor interests and ensuring fair trading.',
+  'GST':               'Goods and Services Tax — India\'s comprehensive indirect tax replacing multiple central and state levies, applied uniformly on the supply of goods and services.',
+  'disinvestment':     'The process by which the government reduces its equity stake in public sector enterprises by selling shares to private investors to raise funds.',
+  'Kisan Credit Card': 'A revolving credit facility for Indian farmers providing flexible short-term loans for seeds, fertilisers, and post-harvest expenses at subsidised interest rates.',
 };
 
 /**
- * Wraps any GLOSSARY words found in text with a clickable <span>.
- * Returns an HTML string — safe because input is _escHtml()'d first.
- * Sorts keys longest-first so "drip irrigation" matches before "irrigation".
+ * Wraps GLOSSARY words found in text with a styled <span>.
+ * IMPORTANT: Sets on the inner .card-text-inner span, not the flex container.
+ * Returns HTML — input is _escHtml()'d first so it is always safe.
  */
 function _linkGlossary(text) {
   if (!text) return '';
   let html = _escHtml(text);
-
+  // Longest keys first so "drip irrigation" matches before "irrigation"
   const keys = Object.keys(GLOSSARY).sort((a, b) => b.length - a.length);
   keys.forEach(term => {
-    const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const re = new RegExp(`(?<![\\w-])(${escaped})(?![\\w-])`, 'gi');
-    html = html.replace(re, match =>
-      `<span class="glossary-term" data-term="${_escHtml(term.toLowerCase())}">${match}</span>`
+    const esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const re  = new RegExp(`(?<![\\w-])(${esc})(?![\\w-])`, 'gi');
+    html = html.replace(re, m =>
+      `<span class="glossary-term" data-term="${_escHtml(term.toLowerCase())}">${m}</span>`
     );
   });
   return html;
@@ -741,12 +730,16 @@ function _renderCard(question, skipStack) {
     card.style.transition = '';
   }
 
-  // Fill content
+  // Fill content — use inner spans so flex layout of parent is never disturbed
   const cardNum = State.currentIndex + 1;
-  if (DOM.cardNumber)         DOM.cardNumber.textContent  = `Q${cardNum}`;
-  if (DOM.cardQuestion)       DOM.cardQuestion.innerHTML  = _linkGlossary(question.question);
-  if (DOM.cardAnswer)         DOM.cardAnswer.innerHTML    = _linkGlossary(question.answer);
-  if (DOM.cardQuestionRepeat) DOM.cardQuestionRepeat.innerHTML = _linkGlossary(question.question);
+  if (DOM.cardNumber) DOM.cardNumber.textContent = `Q${cardNum}`;
+
+  const qInner  = document.getElementById('card-question-inner');
+  const aInner  = document.getElementById('card-answer-inner');
+  const rInner  = document.getElementById('card-question-repeat-inner');
+  if (qInner) qInner.innerHTML = _linkGlossary(question.question);
+  if (aInner) aInner.innerHTML = _linkGlossary(question.answer);
+  if (rInner) rInner.innerHTML = _linkGlossary(question.question);
 
   // Show swipe guide on very first card ever
   if (!ls_get(LS.GUIDE_SHOWN)) {
@@ -2087,7 +2080,7 @@ function _shareApp() {
 }
 
 // ════════════════════════════════════════════════════════════════
-//  GLOSSARY BOTTOM SHEET — wiring
+//  GLOSSARY BOTTOM SHEET
 // ════════════════════════════════════════════════════════════════
 
 function _initGlossarySheet() {
@@ -2095,53 +2088,38 @@ function _initGlossarySheet() {
   const termEl   = document.getElementById('glossary-term-title');
   const defEl    = document.getElementById('glossary-definition');
   const closeBtn = document.getElementById('glossary-close');
-
   if (!overlay) return;
 
-  // Open sheet when any .glossary-term span is tapped
+  // Open on any glossary-term tap
   document.addEventListener('click', (e) => {
     const span = e.target.closest('.glossary-term');
     if (!span) return;
-
     e.stopPropagation();
-
-    const key  = span.dataset.term;
-    // Look up case-insensitively
-    const def  = GLOSSARY[key] ||
+    const key = span.dataset.term;
+    const def = GLOSSARY[key] ||
       Object.entries(GLOSSARY).find(([k]) => k.toLowerCase() === key)?.[1];
-
     if (!def) return;
-
-    // Display the original casing from the card, not the dict key
     termEl.textContent = span.textContent;
     defEl.textContent  = def;
-
     overlay.classList.remove('hidden');
-    overlay.classList.add('open');
+    requestAnimationFrame(() => overlay.classList.add('open'));
     TG.Haptic.light();
   });
 
-  // Close on overlay tap or close button
   function _close() {
     overlay.classList.remove('open');
-    overlay.addEventListener('transitionend', () => {
-      overlay.classList.add('hidden');
-    }, { once: true });
+    setTimeout(() => overlay.classList.add('hidden'), 300);
     TG.Haptic.select();
   }
 
   closeBtn?.addEventListener('click', _close);
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) _close();
-  });
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) _close(); });
 
-  // Swipe-down on sheet to close
+  // Swipe down the sheet to close
   const sheet = document.getElementById('glossary-sheet');
   let _sy = 0;
   sheet?.addEventListener('touchstart', e => { _sy = e.touches[0].clientY; }, { passive: true });
-  sheet?.addEventListener('touchend',   e => {
-    if (e.changedTouches[0].clientY - _sy > 60) _close();
-  }, { passive: true });
+  sheet?.addEventListener('touchend',   e => { if (e.changedTouches[0].clientY - _sy > 55) _close(); }, { passive: true });
 }
 
 async function boot() {
