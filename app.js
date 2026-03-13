@@ -45,8 +45,6 @@ const LS = {
   STATS:         'dca_stats',           // { streak, lastActive, totalSeen, daysActive }
   GUIDE_SHOWN:   'dca_guide_shown',     // Whether swipe guide has been dismissed
   HISTORY:       'dca_history',         // [{id, question, answer, category, action, ts}]
-  DAILY_GOAL:    'dca_daily_goal',      // Number — daily card target (default 20)
-  TODAY_PROG:    'dca_today_progress',  // { date: 'YYYY-MM-DD', count: N }
 };
 
 // ════════════════════════════════════════════════════════════════
@@ -539,8 +537,6 @@ function markSeen(questionId) {
     try { _checkShareMilestone(seen.length); } catch(e) {}
   }
   _updateStats();
-  // Track daily goal progress (every card action counts)
-  try { _trackTodayProgress(); } catch(e) {}
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -600,6 +596,121 @@ function _renderStreakUI(streak) {
 }
 
 // ════════════════════════════════════════════════════════════════
+//  GLOSSARY — tap a term on the card to see a quick definition
+// ════════════════════════════════════════════════════════════════
+
+const GLOSSARY = {
+  // ── Agronomy & Crops ─────────────────────────────────────────
+  'photoperiodism':    'The response of a plant\'s flowering or growth to the relative lengths of day and night. Plants are classified as short-day, long-day, or day-neutral.',
+  'vernalisation':     'The process by which prolonged cold exposure triggers flowering in plants. Wheat and rye require vernalisation before they can flower.',
+  'apomixis':          'Reproduction in plants without fertilisation, producing seeds genetically identical to the mother plant. Widely studied to fix hybrid vigour.',
+  'allelopathy':       'The release of biochemicals by one plant that inhibit or stimulate the growth of nearby plants. Used in natural weed suppression strategies.',
+  'hydroponics':       'A method of growing plants in nutrient-rich water without soil. Roots are directly exposed to mineral solutions, enabling faster growth.',
+  'aeroponics':        'Growing plants with roots suspended in air and misted with nutrients. Uses less water than hydroponics and allows more oxygen to roots.',
+  'intercropping':     'Growing two or more crops simultaneously on the same field. Improves soil health, reduces pests, and increases overall yield per unit area.',
+  'monoculture':       'Farming a single crop species over a large area. Maximises short-term yield but increases vulnerability to pests, disease, and soil depletion.',
+  'polyculture':       'Cultivating multiple crop species together in one system. Mimics natural ecosystems and improves biodiversity, resilience, and sustainability.',
+  'phenology':         'The study of cyclic and seasonal natural phenomena in plants and animals, such as flowering dates, leaf fall, and migration timings.',
+  'stomata':           'Tiny pores found mainly on leaf surfaces that regulate gas exchange (CO₂ and O₂) and water vapour loss through transpiration.',
+  'transpiration':     'The process by which water is absorbed by roots, travels through the plant, and evaporates from leaves into the atmosphere.',
+  'germination':       'The process by which a seed sprouts and begins to grow into a seedling after absorbing water and receiving the right temperature conditions.',
+  'dormancy':          'A state of suspended growth in seeds or buds during unfavourable conditions. It ensures survival until temperature, light, or moisture improves.',
+  'tillage':           'The mechanical preparation of soil for cultivation by ploughing, turning, or breaking. Zero tillage conserves soil structure and moisture.',
+  'mulching':          'Covering soil surface with organic or inorganic material to retain moisture, suppress weeds, and regulate soil temperature.',
+  'fertigation':       'The technique of applying fertilisers directly through an irrigation system. Improves nutrient efficiency and reduces wastage.',
+  'ratooning':         'Allowing a crop to regrow from the root or stubble after harvesting rather than replanting. Common in sugarcane, banana, and rice.',
+  'lodging':           'The permanent displacement of plant stems from their upright position due to wind, rain, or weak stems. Causes significant yield losses.',
+  'etiolation':        'Abnormal elongation of plant stems and pale colour caused by insufficient light. The plant stretches towards the nearest light source.',
+  // ── Soil Science ─────────────────────────────────────────────
+  'pedology':          'The branch of science dealing with the study of soils in their natural environment, including their formation, classification, and mapping.',
+  'humus':             'The dark organic component of soil formed by decomposition of plant and animal matter. It improves soil structure, water retention, and fertility.',
+  'leaching':          'The downward movement of soluble nutrients through the soil by water. Excessive leaching depletes essential minerals from the root zone.',
+  'percolation':       'The movement of water through the soil profile, especially into deeper layers. Affects groundwater recharge and nutrient distribution.',
+  'salinity':          'The concentration of dissolved salts in soil or water. High soil salinity reduces water availability to plants and damages root cells.',
+  'sodicity':          'A soil condition caused by excess sodium ions, leading to poor structure, crusting, and reduced water infiltration. Differs from salinity.',
+  'laterite':          'A highly weathered soil rich in iron and aluminium oxides, formed in tropical climates. Hardens when exposed to air; low in plant nutrients.',
+  'mycorrhizae':       'Symbiotic fungi that colonise plant roots, greatly extending the root surface area and improving uptake of phosphorus and water.',
+  'rhizobium':         'Nitrogen-fixing bacteria that live in root nodules of legumes. They convert atmospheric nitrogen into ammonia, reducing the need for fertilisers.',
+  'erosion':           'The wearing away of topsoil by wind or water. It is one of the leading causes of land degradation and loss of agricultural productivity.',
+  'compaction':        'The compression of soil particles, reducing pore space and limiting root growth, water infiltration, and air circulation.',
+  // ── Irrigation & Water ───────────────────────────────────────
+  'drip irrigation':   'A water-saving method that delivers water directly to the plant root zone through emitters. Reduces evaporation and weed growth significantly.',
+  'waterlogging':      'Saturation of soil with water to the point that oxygen is depleted from the root zone, causing stress or death to most crops.',
+  'evapotranspiration':'The combined process of evaporation from the soil surface and transpiration from plant leaves. Key for estimating crop water requirements.',
+  'aquifer':           'An underground layer of porous rock or sediment that holds and transmits groundwater. Over-extraction of aquifers leads to water table depletion.',
+  'watershed':         'The total land area that drains into a common river, stream, or body of water. Watershed management is critical for flood control and irrigation.',
+  // ── Plant Protection ─────────────────────────────────────────
+  'IPM':               'Integrated Pest Management — a sustainable approach combining biological, cultural, physical, and chemical tools to minimise pest damage and costs.',
+  'biocontrol':        'Using living organisms such as predatory insects, parasites, or pathogens to control pest populations, reducing reliance on chemical pesticides.',
+  'nematode':          'Microscopic roundworms found in soil. Some are beneficial predators of pests, while others are plant parasites causing serious root damage.',
+  'pathogen':          'Any organism — fungus, bacteria, virus, or parasite — that causes disease in plants or animals. Identifying pathogens is key to crop protection.',
+  'virulence':         'The degree of damage a pathogen can cause to a host. Highly virulent strains spread rapidly and cause severe symptoms in infected plants.',
+  // ── Animal Science ───────────────────────────────────────────
+  'ruminant':          'A mammal that digests plant-based food through a specialised stomach with multiple chambers. Cattle, sheep, and goats are common ruminants.',
+  'monogastric':       'An animal with a single-chambered stomach, such as pigs and poultry. They cannot digest cellulose efficiently unlike ruminants.',
+  'zoonosis':          'A disease that can be transmitted between animals and humans. Examples include rabies, avian influenza, and brucellosis.',
+  'parturition':       'The process of giving birth in animals. Also called calving (cattle), farrowing (pigs), lambing (sheep), or kidding (goats).',
+  'lactation':         'The production and secretion of milk by mammary glands after parturition. Influenced by breed, nutrition, health, and milking frequency.',
+  'mastitis':          'Inflammation of the mammary gland in dairy animals, usually caused by bacterial infection. It reduces milk yield and affects milk quality.',
+  'FCR':               'Feed Conversion Ratio — the amount of feed required to produce one unit of body weight gain. Lower FCR means better feed efficiency.',
+  // ── Fisheries & Aquaculture ──────────────────────────────────
+  'aquaculture':       'The controlled farming of fish, shellfish, algae, or other aquatic organisms. It is the fastest-growing food production sector globally.',
+  'eutrophication':    'The excessive enrichment of water with nutrients, causing dense algae growth and oxygen depletion that kills aquatic life. Often from farm runoff.',
+  'biomass':           'The total mass of living organisms in a given area or volume. In aquaculture, it refers to the total weight of fish in a pond or tank.',
+  // ── Agricultural Economics & Policy ─────────────────────────
+  'MSP':               'Minimum Support Price — a guaranteed price set by the Indian government at which it purchases crops from farmers to protect against market falls.',
+  'procurement':       'The process by which government agencies buy food grains from farmers at the MSP. Procured grain goes into the public food buffer stock.',
+  'subsidies':         'Financial assistance given by the government to farmers to reduce production costs for inputs like fertilisers, seeds, power, and irrigation.',
+  'PDS':               'Public Distribution System — the Indian government\'s food security programme that supplies subsidised grains to below-poverty-line households.',
+  'NABARD':            'National Bank for Agriculture and Rural Development — India\'s apex development bank for agriculture, rural industries, and small enterprises.',
+  'cooperatives':      'Farmer-owned organisations where members pool resources for buying inputs, processing produce, or accessing credit on favourable terms.',
+  'FPO':               'Farmer Producer Organisation — a collective body of farmers registered under the Companies Act to improve bargaining power and market access.',
+  'Kisan Credit Card': 'A short-term credit scheme for Indian farmers providing flexible loans for crop production, maintenance, and post-harvest expenses.',
+  // ── Environment & Ecology ────────────────────────────────────
+  'biodiversity':      'The variety of life on Earth — including genes, species, and ecosystems. Agricultural biodiversity is critical for food security and resilience.',
+  'agroforestry':      'A land-use system that integrates trees with crops or livestock on the same land. It improves soil health, biodiversity, and farm income.',
+  'deforestation':     'The permanent removal of forest cover, often for agriculture or development. It causes soil erosion, loss of biodiversity, and climate change.',
+  'desertification':   'The process by which fertile land becomes desert, typically due to drought, deforestation, or inappropriate agriculture. A major land-use crisis.',
+  'eutrophication':    'Excessive nutrient enrichment of water bodies causing algae blooms and oxygen depletion, harming aquatic life. Mainly caused by agricultural runoff.',
+  'methane':           'A potent greenhouse gas produced by ruminant livestock digestion, rice paddies, and manure management. Much more warming than CO₂ over 20 years.',
+  // ── Science & Technology ─────────────────────────────────────
+  'GMO':               'Genetically Modified Organism — a plant or animal whose DNA has been altered using genetic engineering to introduce new or improved traits.',
+  'genome editing':    'Precise modification of DNA at specific locations using tools like CRISPR-Cas9. Enables targeted crop improvement without introducing foreign genes.',
+  'hybrid seed':       'Seed produced by cross-pollinating two genetically different parent varieties. Hybrids show vigour and high yield but cannot be reliably re-sown.',
+  'biofortification':  'The process of increasing the nutritional value of crops through breeding or genetic modification. E.g., Golden Rice is biofortified with vitamin A.',
+  'precision farming': 'Using GPS, sensors, drones, and data analytics to manage fields variably and efficiently, applying inputs only where and when they are needed.',
+  'remote sensing':    'Acquiring information about land, crops, or water from a distance using satellites or aircraft. Used to monitor crop health and detect stress.',
+  'GIS':               'Geographic Information System — software that captures, stores, and analyses spatial data. Used in agriculture for soil mapping and field management.',
+  // ── General / Current Affairs ────────────────────────────────
+  'GDP':               'Gross Domestic Product — the total monetary value of all goods and services produced in a country in a specific time period.',
+  'inflation':         'A general rise in the price level of goods and services over time, reducing the purchasing power of money.',
+  'repo rate':         'The rate at which the Reserve Bank of India lends short-term funds to commercial banks. Raising it controls inflation; lowering it spurs growth.',
+  'SEBI':              'Securities and Exchange Board of India — the regulatory body overseeing India\'s stock and securities markets to protect investors.',
+  'GST':               'Goods and Services Tax — India\'s unified indirect tax replacing multiple levies, applied on the supply of goods and services across the country.',
+  'disinvestment':     'The process by which the government sells its stake in public sector enterprises to private investors to raise funds or improve efficiency.',
+};
+
+/**
+ * Wraps any GLOSSARY words found in text with a clickable <span>.
+ * Returns an HTML string — safe because input is _escHtml()'d first.
+ * Sorts keys longest-first so "drip irrigation" matches before "irrigation".
+ */
+function _linkGlossary(text) {
+  if (!text) return '';
+  let html = _escHtml(text);
+
+  const keys = Object.keys(GLOSSARY).sort((a, b) => b.length - a.length);
+  keys.forEach(term => {
+    const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const re = new RegExp(`(?<![\\w-])(${escaped})(?![\\w-])`, 'gi');
+    html = html.replace(re, match =>
+      `<span class="glossary-term" data-term="${_escHtml(term.toLowerCase())}">${match}</span>`
+    );
+  });
+  return html;
+}
+
+// ════════════════════════════════════════════════════════════════
 //  CARD RENDERING
 // ════════════════════════════════════════════════════════════════
 
@@ -632,10 +743,10 @@ function _renderCard(question, skipStack) {
 
   // Fill content
   const cardNum = State.currentIndex + 1;
-  if (DOM.cardNumber)         DOM.cardNumber.textContent         = `Q${cardNum}`;
-  if (DOM.cardQuestion)       DOM.cardQuestion.textContent       = question.question;
-  if (DOM.cardAnswer)         DOM.cardAnswer.textContent         = question.answer;
-  if (DOM.cardQuestionRepeat) DOM.cardQuestionRepeat.textContent = question.question;
+  if (DOM.cardNumber)         DOM.cardNumber.textContent  = `Q${cardNum}`;
+  if (DOM.cardQuestion)       DOM.cardQuestion.innerHTML  = _linkGlossary(question.question);
+  if (DOM.cardAnswer)         DOM.cardAnswer.innerHTML    = _linkGlossary(question.answer);
+  if (DOM.cardQuestionRepeat) DOM.cardQuestionRepeat.innerHTML = _linkGlossary(question.question);
 
   // Show swipe guide on very first card ever
   if (!ls_get(LS.GUIDE_SHOWN)) {
@@ -1480,9 +1591,6 @@ function renderProgressTab() {
   // Refresh user count display
   _initUserCount();
 
-  // Daily goal ring
-  _renderGoalSection();
-
   // Weekly heatmap
   _renderHeatmap();
 
@@ -1979,154 +2087,61 @@ function _shareApp() {
 }
 
 // ════════════════════════════════════════════════════════════════
-//  CONFETTI ENGINE  — pure-canvas burst, no dependencies
+//  GLOSSARY BOTTOM SHEET — wiring
 // ════════════════════════════════════════════════════════════════
 
-const Confetti = (() => {
-  const COLORS = [
-    '#00E5FF','#00E676','#FFAB00','#FF5252',
-    '#7C4DFF','#FF6D00','#FF4081','#FFD740',
-    '#69F0AE','#40C4FF',
-  ];
+function _initGlossarySheet() {
+  const overlay  = document.getElementById('glossary-overlay');
+  const termEl   = document.getElementById('glossary-term-title');
+  const defEl    = document.getElementById('glossary-definition');
+  const closeBtn = document.getElementById('glossary-close');
 
-  function burst() {
-    const canvas  = document.createElement('canvas');
-    canvas.style.cssText =
-      'position:fixed;inset:0;width:100%;height:100%;' +
-      'pointer-events:none;z-index:9999;';
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
-    document.body.appendChild(canvas);
+  if (!overlay) return;
 
-    const ctx    = canvas.getContext('2d');
-    const cx     = canvas.width / 2;
-    const cy     = canvas.height * 0.35;
+  // Open sheet when any .glossary-term span is tapped
+  document.addEventListener('click', (e) => {
+    const span = e.target.closest('.glossary-term');
+    if (!span) return;
 
-    const pieces = Array.from({ length: 160 }, () => ({
-      x:    cx + (Math.random() - 0.5) * 80,
-      y:    cy,
-      vx:   (Math.random() - 0.5) * 16,
-      vy:   (Math.random() - 1.6) * 14,
-      w:    5 + Math.random() * 9,
-      h:    4 + Math.random() * 6,
-      color: COLORS[Math.floor(Math.random() * COLORS.length)],
-      rot:  Math.random() * Math.PI * 2,
-      rVel: (Math.random() - 0.5) * 0.25,
-      life: 1.0 + Math.random() * 0.4,
-    }));
+    e.stopPropagation();
 
-    let rafId;
+    const key  = span.dataset.term;
+    // Look up case-insensitively
+    const def  = GLOSSARY[key] ||
+      Object.entries(GLOSSARY).find(([k]) => k.toLowerCase() === key)?.[1];
 
-    function tick() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      let anyAlive = false;
+    if (!def) return;
 
-      pieces.forEach(p => {
-        p.vy  += 0.38;            // gravity
-        p.vx  *= 0.995;           // light air resistance
-        p.x   += p.vx;
-        p.y   += p.vy;
-        p.rot += p.rVel;
-        p.life -= 0.012;
+    // Display the original casing from the card, not the dict key
+    termEl.textContent = span.textContent;
+    defEl.textContent  = def;
 
-        if (p.life <= 0 || p.y > canvas.height + 30) return;
-        anyAlive = true;
-
-        ctx.save();
-        ctx.globalAlpha = Math.max(0, Math.min(1, p.life));
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rot);
-        ctx.fillStyle = p.color;
-        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-        ctx.restore();
-      });
-
-      if (anyAlive) {
-        rafId = requestAnimationFrame(tick);
-      } else {
-        canvas.remove();
-      }
-    }
-
-    rafId = requestAnimationFrame(tick);
-    // Hard safety cap — remove canvas after 7 s regardless
-    setTimeout(() => { cancelAnimationFrame(rafId); canvas.remove(); }, 7000);
-  }
-
-  return { burst };
-})();
-
-// ════════════════════════════════════════════════════════════════
-//  DAILY GOAL — tracking + rendering
-// ════════════════════════════════════════════════════════════════
-
-/** Increment today's progress counter; fire confetti if goal is reached */
-function _trackTodayProgress() {
-  const todayStr = today();
-  let tp = ls_get(LS.TODAY_PROG, { date: '', count: 0 });
-  if (tp.date !== todayStr) tp = { date: todayStr, count: 0 };
-  tp.count++;
-  ls_set(LS.TODAY_PROG, tp);
-
-  const goal = ls_get(LS.DAILY_GOAL, 20);
-  // Fire only exactly on hitting the goal (not on every subsequent card)
-  if (tp.count === goal) {
-    TG.Haptic.success();
-    showToast('🎊 Daily goal reached! Incredible work!', 3500);
-    setTimeout(() => Confetti.burst(), 250);
-  }
-}
-
-/** Render the goal ring + caption + picker in the Progress tab */
-function _renderGoalSection() {
-  const todayStr = today();
-  let   tp       = ls_get(LS.TODAY_PROG, { date: '', count: 0 });
-  if (tp.date !== todayStr) tp = { date: todayStr, count: 0 };
-
-  const goal     = ls_get(LS.DAILY_GOAL, 20);
-  const count    = tp.count;
-  const pct      = Math.min(count / Math.max(goal, 1), 1);
-
-  // SVG ring: r=50, so circumference = 2πr ≈ 314.16
-  const CIRC = 2 * Math.PI * 50;
-
-  const countEl   = document.getElementById('goal-today-count');
-  const targetEl  = document.getElementById('goal-target-label');
-  const captionEl = document.getElementById('goal-caption');
-  const ringFill  = document.getElementById('goal-ring-fill');
-
-  if (countEl)  countEl.textContent  = count;
-  if (targetEl) targetEl.textContent = goal;
-
-  if (captionEl) {
-    captionEl.textContent = count >= goal
-      ? '🎊 Goal complete! Come back tomorrow.'
-      : `${goal - count} card${goal - count !== 1 ? 's' : ''} to go today`;
-  }
-
-  if (ringFill) {
-    ringFill.style.strokeDasharray  = `${CIRC}`;
-    ringFill.style.strokeDashoffset = `${CIRC * (1 - pct)}`;
-    ringFill.classList.toggle('goal-complete', count >= goal);
-  }
-
-  // Mark the active goal button
-  document.querySelectorAll('.goal-opt').forEach(btn => {
-    btn.classList.toggle('active', parseInt(btn.dataset.goal) === goal);
+    overlay.classList.remove('hidden');
+    overlay.classList.add('open');
+    TG.Haptic.light();
   });
-}
 
-/** Wire up goal picker buttons — call once after DOM is ready */
-function _initGoalPicker() {
-  document.querySelectorAll('.goal-opt').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const newGoal = parseInt(btn.dataset.goal);
-      ls_set(LS.DAILY_GOAL, newGoal);
-      TG.Haptic.select();
-      _renderGoalSection();
-      showToast(`🎯 Daily goal set to ${newGoal} cards`);
-    });
+  // Close on overlay tap or close button
+  function _close() {
+    overlay.classList.remove('open');
+    overlay.addEventListener('transitionend', () => {
+      overlay.classList.add('hidden');
+    }, { once: true });
+    TG.Haptic.select();
+  }
+
+  closeBtn?.addEventListener('click', _close);
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) _close();
   });
+
+  // Swipe-down on sheet to close
+  const sheet = document.getElementById('glossary-sheet');
+  let _sy = 0;
+  sheet?.addEventListener('touchstart', e => { _sy = e.touches[0].clientY; }, { passive: true });
+  sheet?.addEventListener('touchend',   e => {
+    if (e.changedTouches[0].clientY - _sy > 60) _close();
+  }, { passive: true });
 }
 
 async function boot() {
@@ -2157,7 +2172,7 @@ async function boot() {
   // 6. Init tabs and buttons
   _initTabs();
   _initButtons();
-  _initGoalPicker();
+  _initGlossarySheet();
 
   // 7. Dismiss splash
   await _delay(300);
