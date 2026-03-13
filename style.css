@@ -2472,59 +2472,63 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   GLOSSARY — dotted underline on terms + bottom sheet
+   GLOSSARY — inline term highlight + bottom sheet
 ═══════════════════════════════════════════════════════════════ */
 
-/* ── Inline term highlight ── */
+/* Inner text wrapper — fills flex parent without becoming a flex item */
+.card-text-inner {
+  display: block;
+  width: 100%;
+}
+
+/* ── Glossary term: subtle cyan color + dotted underline ── */
 .glossary-term {
-  border-bottom: 2px dotted var(--cyan);
-  color: inherit;
+  color: #5eead4;          /* soft teal — visible but not distracting */
+  border-bottom: 2px dotted rgba(94, 234, 212, 0.6);
   cursor: pointer;
   border-radius: 2px;
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.15s;
   -webkit-tap-highlight-color: transparent;
-  display: inline;
 }
 
 .glossary-term:active {
-  background: var(--cyan-dim);
-  color: var(--cyan);
+  background: rgba(94, 234, 212, 0.12);
+  border-radius: 3px;
 }
 
-/* ── Dim overlay behind sheet ── */
+/* ── Dim overlay ── */
 .glossary-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0);
+  background: transparent;
   z-index: 1100;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  transition: background 0.25s ease;
   pointer-events: none;
+  transition: background 0.25s ease;
 }
 
 .glossary-overlay.open {
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.65);
   pointer-events: all;
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
-.glossary-overlay.hidden {
-  display: none;
-}
+.glossary-overlay.hidden { display: none; }
 
 /* ── Sheet panel ── */
 .glossary-sheet {
   background: var(--surface-2);
   border: 1px solid var(--glass-border);
+  border-top: 1px solid rgba(255,255,255,0.1);
   border-radius: 24px 24px 0 0;
-  padding: 12px 20px 36px;
+  padding: 10px 22px 40px;
   width: 100%;
   max-width: 520px;
   transform: translateY(100%);
-  transition: transform 0.32s cubic-bezier(0.34, 1.15, 0.64, 1);
+  transition: transform 0.32s cubic-bezier(0.34, 1.1, 0.64, 1);
   pointer-events: all;
 }
 
@@ -2532,27 +2536,27 @@ body {
   transform: translateY(0);
 }
 
-/* ── Drag handle ── */
+/* Drag handle */
 .glossary-sheet-handle {
-  width: 40px;
+  width: 38px;
   height: 4px;
-  background: var(--glass-border);
+  background: rgba(255,255,255,0.15);
   border-radius: 4px;
-  margin: 0 auto 14px;
+  margin: 0 auto 16px;
 }
 
-/* ── Header row ── */
+/* Header row */
 .glossary-sheet-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .glossary-badge {
-  background: var(--cyan-dim);
-  border: 1px solid rgba(0, 229, 255, 0.25);
-  color: var(--cyan);
+  background: rgba(94, 234, 212, 0.1);
+  border: 1px solid rgba(94, 234, 212, 0.3);
+  color: #5eead4;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 1px;
@@ -2576,7 +2580,7 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* ── Term title ── */
+/* Term title */
 .glossary-term-title {
   font-family: var(--font-display);
   font-size: 22px;
@@ -2586,10 +2590,9 @@ body {
   line-height: 1.2;
 }
 
-/* ── Definition text ── */
+/* Definition */
 .glossary-definition {
   font-size: 15px;
-  line-height: 1.7;
+  line-height: 1.75;
   color: var(--text-secondary);
-  font-weight: 400;
 }
