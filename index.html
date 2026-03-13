@@ -107,6 +107,18 @@
           <p class="subject-sub">Select any subject to start swiping cards</p>
         </div>
 
+        <!-- ── MODE TOGGLE ── -->
+        <div class="mode-toggle-row">
+          <button class="mode-toggle-btn active" id="mode-btn-swipe" data-mode="swipe">
+            <span class="mode-btn-icon">🃏</span>
+            <span class="mode-btn-label">Swipe Mode</span>
+          </button>
+          <button class="mode-toggle-btn" id="mode-btn-cram" data-mode="cram">
+            <span class="mode-btn-icon">📋</span>
+            <span class="mode-btn-label">Cram Mode</span>
+          </button>
+        </div>
+
         <!-- ── 50-CARD SPRINT BUTTON ── -->
         <button class="sprint-cta-btn" id="btn-sprint">
           <div class="sprint-cta-left">
@@ -201,6 +213,11 @@
           </div>
         </div>
 
+        <!-- ── CRAM VIEW (shown instead of card arena in cram mode) ── -->
+        <div class="cram-view hidden" id="cram-view">
+          <!-- Populated by JS -->
+        </div>
+
         <!-- SPRINT HUD (timer + score — shown only in sprint mode) -->
         <div class="sprint-hud hidden" id="sprint-hud">
           <div class="sprint-hud-timer" id="sprint-hud-timer">10:00</div>
@@ -228,14 +245,14 @@
               <!-- FRONT -->
               <div class="card-face card-front" id="card-front">
                 <div class="card-number" id="card-number">Q1</div>
-                <div class="card-question" id="card-question"><span class="card-text-inner" id="card-question-inner">Loading…</span></div>
+                <div class="card-question" id="card-question">Loading…</div>
               </div>
 
               <!-- BACK -->
               <div class="card-face card-back" id="card-back">
                 <div class="back-label">Answer</div>
-                <div class="card-answer" id="card-answer"><span class="card-text-inner" id="card-answer-inner"></span></div>
-                <div class="card-question-repeat" id="card-question-repeat"><span class="card-text-inner" id="card-question-repeat-inner"></span></div>
+                <div class="card-answer" id="card-answer"></div>
+                <div class="card-question-repeat" id="card-question-repeat"></div>
               </div>
 
             </div>
@@ -458,21 +475,6 @@
       <button class="channel-skip-btn" id="channel-skip-btn">
         Maybe later
       </button>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════
-       GLOSSARY BOTTOM SHEET
-  ════════════════════════════════════════════════ -->
-  <div class="glossary-overlay hidden" id="glossary-overlay">
-    <div class="glossary-sheet" id="glossary-sheet">
-      <div class="glossary-sheet-handle"></div>
-      <div class="glossary-sheet-head">
-        <div class="glossary-badge">📖 Glossary</div>
-        <button class="glossary-close" id="glossary-close" aria-label="Close">✕</button>
-      </div>
-      <div class="glossary-term-title" id="glossary-term-title"></div>
-      <p class="glossary-definition" id="glossary-definition"></p>
     </div>
   </div>
 
