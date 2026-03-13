@@ -1031,6 +1031,10 @@ function renderSavedTab() {
   if (DOM.btnQuizSaved)
     DOM.btnQuizSaved.classList.toggle('hidden', raw.length === 0);
 
+  // Hide/show WhatsApp dump button
+  const dumpBtn = document.getElementById('btn-whatsapp-dump');
+  if (dumpBtn) dumpBtn.classList.toggle('hidden', raw.length === 0);
+
   if (raw.length === 0) {
     DOM.savedEmpty?.classList.remove('hidden');
     DOM.savedList.classList.add('hidden');
@@ -2260,6 +2264,40 @@ async function boot() {
   setTimeout(() => {
     try { _showChannelPopup(); } catch(e) { console.warn('[ChannelPopup]', e); }
   }, 350);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  WHATSAPP DUMP  exportToWhatsApp()
+//  Formats all saved cards into a WhatsApp-ready message and
+//  opens wa.me so students can paste into their personal chat.
+// ════════════════════════════════════════════════════════════════
+
+function exportToWhatsApp() {
+  const saved = ls_get(LS.SAVED, []);
+  if (!saved.length) return;
+
+  TG.Haptic.medium();
+
+  const header  = '📚 *My AGRIMETS Revision Notes*';
+  const footer  = '\n⚡ Practised via Agrimets Mini App\n🔗 t.me/agrimets_bot';
+
+  const body = saved.map((item, i) =>
+    `🔸 *Q${i + 1}:* ${item.question}\n🔹 *A:* ${item.answer}${item.category ? `\n📂 ${item.category}` : ''}`
+  ).join('\n\n');
+
+  const message    = `${header}\n\n${body}${footer}`;
+  const waUrl      = `https://wa.me/?text=${encodeURIComponent(message)}`;
+
+  // Open through Telegram (respects Mini App sandbox) or direct
+  try {
+    if (window.Telegram?.WebApp?.openLink) {
+      window.Telegram.WebApp.openLink(waUrl);
+    } else {
+      window.open(waUrl, '_blank');
+    }
+  } catch (e) {
+    window.open(waUrl, '_blank');
+  }
 }
 
 // ── Wait for DOM ──────────────────────────────────────────────
