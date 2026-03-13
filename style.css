@@ -2472,127 +2472,176 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   GLOSSARY — inline term highlight + bottom sheet
+   MODE TOGGLE — Swipe vs Cram
 ═══════════════════════════════════════════════════════════════ */
 
-/* Inner text wrapper — fills flex parent without becoming a flex item */
-.card-text-inner {
-  display: block;
-  width: 100%;
-}
-
-/* ── Glossary term: subtle cyan color + dotted underline ── */
-.glossary-term {
-  color: #5eead4;          /* soft teal — visible but not distracting */
-  border-bottom: 2px dotted rgba(94, 234, 212, 0.6);
-  cursor: pointer;
-  border-radius: 2px;
-  transition: background 0.15s;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.glossary-term:active {
-  background: rgba(94, 234, 212, 0.12);
-  border-radius: 3px;
-}
-
-/* ── Dim overlay ── */
-.glossary-overlay {
-  position: fixed;
-  inset: 0;
-  background: transparent;
-  z-index: 1100;
+.mode-toggle-row {
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  pointer-events: none;
-  transition: background 0.25s ease;
-}
-
-.glossary-overlay.open {
-  background: rgba(0, 0, 0, 0.65);
-  pointer-events: all;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-.glossary-overlay.hidden { display: none; }
-
-/* ── Sheet panel ── */
-.glossary-sheet {
-  background: var(--surface-2);
-  border: 1px solid var(--glass-border);
-  border-top: 1px solid rgba(255,255,255,0.1);
-  border-radius: 24px 24px 0 0;
-  padding: 10px 22px 40px;
-  width: 100%;
-  max-width: 520px;
-  transform: translateY(100%);
-  transition: transform 0.32s cubic-bezier(0.34, 1.1, 0.64, 1);
-  pointer-events: all;
-}
-
-.glossary-overlay.open .glossary-sheet {
-  transform: translateY(0);
-}
-
-/* Drag handle */
-.glossary-sheet-handle {
-  width: 38px;
-  height: 4px;
-  background: rgba(255,255,255,0.15);
-  border-radius: 4px;
-  margin: 0 auto 16px;
-}
-
-/* Header row */
-.glossary-sheet-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  gap: 8px;
+  padding: 0 16px;
   margin-bottom: 16px;
 }
 
-.glossary-badge {
-  background: rgba(94, 234, 212, 0.1);
-  border: 1px solid rgba(94, 234, 212, 0.3);
-  color: #5eead4;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  border-radius: 20px;
-}
-
-.glossary-close {
-  background: var(--glass);
-  border: 1px solid var(--glass-border);
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  color: var(--text-secondary);
-  font-size: 12px;
-  cursor: pointer;
+.mode-toggle-btn {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 7px;
+  padding: 11px 14px;
+  border-radius: var(--r-md);
+  border: 1.5px solid var(--glass-border);
+  background: var(--glass);
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, color 0.18s, transform 0.1s;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Term title */
-.glossary-term-title {
-  font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--text-primary);
-  margin-bottom: 12px;
-  line-height: 1.2;
+.mode-toggle-btn:active { transform: scale(0.96); }
+
+.mode-toggle-btn .mode-btn-icon { font-size: 16px; line-height: 1; }
+
+.mode-toggle-btn.active {
+  background: var(--cyan-dim);
+  border-color: var(--cyan);
+  color: var(--cyan);
 }
 
-/* Definition */
-.glossary-definition {
-  font-size: 15px;
-  line-height: 1.75;
-  color: var(--text-secondary);
+/* ═══════════════════════════════════════════════════════════════
+   CRAM VIEW — scrollable cheat-sheet
+═══════════════════════════════════════════════════════════════ */
+
+.cram-view {
+  position: absolute;
+  inset: 0;
+  top: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 12px 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cram-view.hidden { display: none; }
+
+/* ── Section header ── */
+.cram-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 4px 10px;
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 2;
+  border-bottom: 1px solid var(--glass-border);
+  margin-bottom: 8px;
+}
+
+.cram-header-count {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cyan);
+}
+
+.cram-header-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ── Individual Q&A item ── */
+.cram-item {
+  background: var(--surface);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--r-md);
+  padding: 14px 16px 16px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  animation: cram-in 0.25s ease both;
+  animation-delay: calc(var(--ci, 0) * 0.018s);
+}
+
+@keyframes cram-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cram-item.cram-revealed {
+  border-color: rgba(0, 230, 118, 0.3);
+  background: linear-gradient(135deg, var(--surface) 0%, rgba(0,230,118,0.04) 100%);
+}
+
+/* Category badge */
+.cram-category {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+/* Question text */
+.cram-question {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.55;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+
+.cram-num {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--cyan);
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* Answer — hidden until revealed */
+.cram-answer {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: transparent;
+  background: rgba(255,255,255,0.06);
+  border-radius: var(--r-sm);
+  padding: 8px 12px;
+  line-height: 1.5;
+  user-select: none;
+  transition: color 0.25s ease, background 0.25s ease;
+  position: relative;
+}
+
+/* Revealed state */
+.cram-item.cram-revealed .cram-answer {
+  color: #00ff88;
+  background: rgba(0, 230, 118, 0.08);
+  text-shadow: 0 0 10px rgba(0,255,136,0.3);
+}
+
+/* Footer */
+.cram-footer {
+  padding: 20px 4px;
+  text-align: center;
+}
+
+.cram-footer-tip {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
 }
