@@ -674,7 +674,7 @@ body {
 
 .card-question {
   font-family: 'Times New Roman', Times, serif;
-  font-size: clamp(15px, 4.2vw, 22px);
+  font-size: clamp(17px, 4.8vw, 25px);
   font-weight: 700;
   line-height: 1.65;
   color: #FFFFFF;
@@ -1018,11 +1018,11 @@ body {
 }
 
 .saved-item-question {
-  font-family: var(--font-display);
-  font-size: 15px;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 17px;
   font-weight: 700;
   color: var(--text-primary);
-  line-height: 1.4;
+  line-height: 1.5;
   margin-bottom: 10px;
 }
 
@@ -1796,7 +1796,7 @@ body {
 
 .hist-item-question {
   font-family: 'Times New Roman', Times, serif;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.5;
@@ -2430,11 +2430,11 @@ body {
 .sprint-review-known   .sprint-review-category { color: var(--green); }
 
 .sprint-review-question {
-  font-family: var(--font-display);
-  font-size: 14px;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 16px;
   font-weight: 700;
   color: var(--text-primary);
-  line-height: 1.4;
+  line-height: 1.5;
   margin-bottom: 10px;
 }
 
@@ -2513,9 +2513,7 @@ body {
 .mode-btn-label { line-height: 1; }
 
 /* ═══════════════════════════════════════════════════════════════
-   CRAM VIEW — scrollable cheat-sheet
-   KEY FIX: flex:1 + min-height:0 makes it fill remaining space
-   and scroll correctly inside a flex column parent (#card-area)
+   CRAM VIEW
 ═══════════════════════════════════════════════════════════════ */
 .cram-view {
   flex: 1;
@@ -2528,12 +2526,11 @@ body {
 }
 .cram-view.hidden { display: none; }
 
-/* Sticky count header */
 .cram-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 4px 10px;
+  padding: 10px 4px;
   position: sticky;
   top: 0;
   background: var(--bg);
@@ -2550,7 +2547,6 @@ body {
 }
 .cram-header-hint { font-size: 11px; color: var(--text-muted); }
 
-/* Q&A row */
 .cram-item {
   background: var(--surface);
   border: 1px solid var(--glass-border);
@@ -2581,35 +2577,38 @@ body {
   color: var(--text-muted);
   margin-bottom: 6px;
 }
+
+/* QUESTION: Times New Roman, comfortable reading size */
 .cram-question {
   display: flex;
   align-items: baseline;
   gap: 7px;
-  font-family: var(--font-display);
-  font-size: 14px;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 17px;
   font-weight: 700;
   color: var(--text-primary);
-  line-height: 1.55;
+  line-height: 1.6;
   margin-bottom: 10px;
 }
 .cram-num {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
   color: var(--cyan);
+  font-family: var(--font-display);
   flex-shrink: 0;
 }
 .cram-question-text { flex: 1; }
 
-/* Hidden answer — revealed on tap */
+/* ANSWER: hidden until tapped */
 .cram-answer {
-  font-family: var(--font-display);
-  font-size: 14px;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 16px;
   font-weight: 700;
   color: transparent;
   background: rgba(255, 255, 255, 0.06);
   border-radius: var(--r-sm);
   padding: 8px 12px;
-  line-height: 1.5;
+  line-height: 1.55;
   user-select: none;
   transition: color 0.25s ease, background 0.25s ease;
 }
@@ -2623,7 +2622,7 @@ body {
 .cram-footer-tip { font-size: 12px; color: var(--text-muted); font-style: italic; }
 
 /* ═══════════════════════════════════════════════════════════════
-   GLOSSARY — dotted term highlight + bottom sheet
+   GLOSSARY
 ═══════════════════════════════════════════════════════════════ */
 .glossary-term {
   color: #5eead4;
@@ -2644,13 +2643,12 @@ body {
   transition: background 0.25s ease;
 }
 .glossary-overlay.open {
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(0,0,0,0.65);
   pointer-events: all;
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
 }
 .glossary-overlay.hidden { display: none; }
-
 .glossary-sheet {
   background: var(--surface-2);
   border: 1px solid var(--glass-border);
@@ -2662,7 +2660,6 @@ body {
   pointer-events: all;
 }
 .glossary-overlay.open .glossary-sheet { transform: translateY(0); }
-
 .glossary-sheet-handle {
   width: 38px; height: 4px;
   background: rgba(255,255,255,0.15);
@@ -2696,7 +2693,7 @@ body {
   font-family: var(--font-display);
   font-size: 22px; font-weight: 800;
   color: var(--text-primary);
-  margin-bottom: 12px; line-height: 1.2;
+  margin-bottom: 12px;
 }
 .glossary-definition {
   font-size: 15px; line-height: 1.75;
